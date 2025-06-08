@@ -219,3 +219,69 @@ A aplicação foi projetada e configurada para interagir com o banco de dados My
 * **Configuração do DbContext:** O `ItauInvestimentosDbContext` (definido na camada `Infrastructure`) foi registrado no contêiner de Injeção de Dependência do .NET Core no projeto `Itau.Investimentos.Api`, preparando a aplicação para acessar o banco de dados de forma assíncrona.
 
 **Observação:** Embora a arquitetura e as configurações para o uso de `async/await` com Entity Framework Core estejam implementadas no código-fonte, a validação em tempo de execução desta funcionalidade não foi possível devido aos persistentes erros de compilação na camada `Itau.Investimentos.Api` (conforme detalhado na seção **3.3 Problemas Atuais de Compilação e Inicialização da API**).
+
+---
+
+## 4. Lógica de Negócio - Preço Médio
+
+Esta tarefa focou na implementação de uma funcionalidade central para o sistema de investimentos: o cálculo do preço médio ponderado de aquisição de um ativo.
+![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/4%20-%20Calculo%20do%20pre%C3%A7o%20m%C3%A9dio%20.png)
+### 4.1 Implementação do Método `CalcularPrecoMedioPonderado`
+
+* **Localização:** A lógica para este cálculo foi implementada na classe estática `CalculadoraPrecoMedio.cs`, localizada no projeto **`Itau.Investimentos.Core`**.
+* **Justificativa para Localização:** A camada `Core` é a mais adequada para essa lógica, pois ela representa uma regra de negócio fundamental e agnóstica a detalhes de infraestrutura (banco de dados) ou de apresentação (API). Isso garante que o cálculo possa ser reutilizado por qualquer parte da aplicação que necessite dele, mantendo a separação de responsabilidades.
+* **Funcionalidade:** O método `CalcularPrecoMedioPonderado` foi projetado para receber uma coleção de operações de compra (com `PrecoUnitario` e `Quantidade`) e calcular o preço médio ponderado, considerando diferentes quantidades e preços para compor o cálculo.
+* **Tratamento de Entradas Inválidas:** O método incorpora validações para garantir a robustez, lançando exceções (`ArgumentNullException`, `ArgumentException`) em casos como listas de compras nulas, vazias ou sem operações válidas (quantidade zero/negativa), garantindo a integridade do cálculo.
+
+```csharp
+// Exemplo simplificado da classe OperacaoCompra para o cálculo.
+// No projeto real, esta pode ser sua entidade 'Operacao' principal.
+public class OperacaoCompra
+{
+    public decimal PrecoUnitario { get; set; }
+    public int Quantidade { get; set; }
+}
+
+public static class CalculadoraPrecoMedio
+{
+    /// <summary>
+    /// Calcula o preço médio ponderado de aquisição de um ativo.
+    /// </summary>
+    /// <param name="compras">Uma lista de operações de compra do ativo.</param>
+    /// <returns>O preço médio ponderado de aquisição.</returns>
+    /// <exception cref="ArgumentNullException">Lançada se a lista de compras for nula.</exception>
+    /// <exception cref="ArgumentException">Lançada se a lista de compras for vazia ou se todas as quantidades forem zero.</exception>
+    public static decimal CalcularPrecoMedioPonderado(IEnumerable<OperacaoCompra> compras)
+    {
+        if (compras == null)
+        {
+            throw new ArgumentNullException(nameof(compras), "A lista de operações de compra não pode ser nula.");
+        }
+
+        // Garante que a lista não está vazia e que há pelo menos uma compra válida
+        var comprasValidas = compras.Where(c => c.Quantidade > 0 && c.PrecoUnitario >= 0).ToList();
+        if (!comprasValidas.Any())
+        {
+            throw new ArgumentException("Nenhuma operação de compra válida (com quantidade positiva e preço não negativo) foi encontrada na lista.", nameof(compras));
+        }
+
+        decimal totalInvestido = 0;
+        int totalQuantidade = 0;
+
+        foreach (var compra in comprasValidas)
+        {
+            totalInvestido += compra.PrecoUnitario * compra.Quantidade;
+            totalQuantidade += compra.Quantidade;
+        }
+
+        // Este if geralmente não seria atingido se 'comprasValidas.Any()' for verdadeiro e 'Quantidade' > 0
+        // mas é um bom check de segurança.
+        if (totalQuantidade == 0)
+        {
+            throw new ArgumentException("A soma das quantidades de compra válidas resultou em zero.", nameof(compras));
+        }
+
+        return totalInvestido / totalQuantidade;
+    }
+}
+```
