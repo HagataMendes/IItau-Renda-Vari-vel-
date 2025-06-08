@@ -208,9 +208,8 @@ Durante o desenvolvimento e integração da camada de Aplicação e Infraestrutu
 
 * **Impacto:** Atualmente, não é possível executar a API para testar a conexão com o banco de dados ou os endpoints implementados. No entanto, a estrutura do código-fonte para a integração com o banco de dados e as camadas da aplicação estão presentes e configuradas conforme as boas práticas.
 
-# Arquitetura foi desenhada para utilizar async/await com Entity Framework Core.
+## Arquitetura foi desenhada para utilizar async/await com Entity Framework Core.
 ![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/3%20-%20%20utilizando%20os%20recursos%20do%20Entity%20Framework%20Core%20e%20garantindo%20o%20uso%20de%20async%20await.png)
-### 3.2 Configuração de Acesso a Dados e Assincronicidade
 
 A aplicação foi projetada e configurada para interagir com o banco de dados MySQL utilizando Entity Framework Core, priorizando a utilização de operações assíncronas (`async/await`) para garantir a responsividade e escalabilidade.
 
@@ -221,7 +220,6 @@ A aplicação foi projetada e configurada para interagir com o banco de dados My
 **Observação:** Embora a arquitetura e as configurações para o uso de `async/await` com Entity Framework Core estejam implementadas no código-fonte, a validação em tempo de execução desta funcionalidade não foi possível devido aos persistentes erros de compilação na camada `Itau.Investimentos.Api` (conforme detalhado na seção **3.3 Problemas Atuais de Compilação e Inicialização da API**).
 
 ---
-
 ## 4. Lógica de Negócio - Preço Médio
 
 Esta tarefa focou na implementação de uma funcionalidade central para o sistema de investimentos: o cálculo do preço médio ponderado de aquisição de um ativo.
@@ -285,3 +283,152 @@ public static class CalculadoraPrecoMedio
     }
 }
 ```
+---
+
+## 5. Testes Unitários
+
+Bateria de testes unitários para a lógica de negócio, usando xUnit.
+
+### 5.1 Estrutura e Cobertura dos Testes
+
+* **Projeto:** `Itau.Investimentos.Core.Tests`
+* **Foco:** Testes positivos para validação de cálculo e testes de erro para tratamento de entradas inválidas.
+
+```csharp
+public class OperacaoCompra
+{
+    public decimal PrecoUnitario { get; set; }
+    public int Quantidade { get; set; }
+}
+
+public static class CalculadoraPrecoMedio
+{
+    public static decimal CalcularPrecoMedioPonderado(IEnumerable<OperacaoCompra> compras)
+    {
+        if (compras == null) throw new ArgumentNullException(nameof(compras), "A lista de operações de compra não pode ser nula.");
+
+        var comprasValidas = compras.Where(c => c.Quantidade > 0 && c.PrecoUnitario >= 0).ToList();
+        if (!comprasValidas.Any())
+        {
+            throw new ArgumentException("Nenhuma operação de compra válida encontrada.", nameof(compras));
+        }
+
+        decimal totalInvestido = 0;
+        int totalQuantidade = 0;
+
+        foreach (var compra in comprasValidas)
+        {
+            totalInvestido += compra.PrecoUnitario * compra.Quantidade;
+            totalQuantidade += compra.Quantidade;
+        }
+
+        if (totalQuantidade == 0) throw new ArgumentException("A soma das quantidades resultou em zero.", nameof(compras));
+
+        return totalInvestido / totalQuantidade;
+    }
+}
+
+using Xunit;
+using FluentAssertions;
+using Itau.Investimentos.Core.Calculators; // Assumindo o namespace correto
+
+public class CalculadoraPrecoMedioTests
+{
+    [Fact]
+    public void CalcularPrecoMedioPonderado_DeveRetornarPrecoCorreto_ParaComprasMultiplas()
+    {
+        var compras = new List<OperacaoCompra>
+        {
+            new OperacaoCompra { PrecoUnitario = 10.00m, Quantidade = 100 },
+            new OperacaoCompra { PrecoUnitario = 12.00m, Quantidade = 50 }
+        };
+        var precoMedio = CalculadoraPrecoMedio.CalcularPrecoMedioPonderado(compras);
+        precoMedio.Should().BeApproximately(10.6666m, 0.0001m); // (10*100 + 12*50) / 150
+    }
+
+    [Fact]
+    public void CalcularPrecoMedioPonderado_DeveLancarArgumentNullException_QuandoComprasForNula()
+    {
+        IEnumerable<OperacaoCompra> compras = null;
+        Action act = () => CalculadoraPrecoMedio.CalcularPrecoMedioPonderado(compras);
+        act.Should().Throw<ArgumentNullException>().WithMessage("*lista de operações de compra não pode ser nula*");
+    }
+
+    [Fact]
+    public void CalcularPrecoMedioPonderado_DeveLancarArgumentException_QuandoComprasForVazia()
+    {
+        var compras = new List<OperacaoCompra>();
+        Action act = () => CalculadoraPrecoMedio.CalcularPrecoMedioPonderado(compras);
+        act.Should().Throw<ArgumentException>().WithMessage("*Nenhuma operação de compra válida encontrada*");
+    }
+
+    // Mais testes para outros cenários de erro e casos de borda...
+}
+```
+## 6. Testes Mutantes
+
+### 6.1 Conceito e Importância
+
+Técnica para avaliar a qualidade dos testes unitários, introduzindo pequenas falhas (mutações) no código para verificar se os testes as detectam ("matam" os mutantes). Essencial para encontrar lacunas em testes e aumentar a confiança no código.
+
+### 6.2 Exemplo de Mutação no Preço Médio
+
+* **Mutação:** No método `CalcularPrecoMedioPonderado`, alterar `*` para `+` na linha de cálculo `totalInvestido += compra.PrecoUnitario * compra.Quantidade;`.
+* **Teste Afetado:** Um teste que espera `10.66` passaria a receber `1.14` (Ex: `(10+100) + (12+50) = 172; 172/150 = 1.14`), falhando e confirmando a eficácia do teste.
+
+### 7. Integração entre Sistemas
+Integração resiliente com microserviços externos (ex: Kafka para cotações).
+
+*7.1 Worker Service .NET e Estratégias de Resiliência
+Worker Service: Itau.Investimentos.QuotesConsumer consumirá mensagens Kafka (Confluent.Kafka) e salvará cotações.
+Retry (Polly): Políticas de retentativa com exponential backoff para operações de escrita no banco de dados, via Entity Framework Core.
+Idempotência: Chave de idempotência em mensagens Kafka. Verificação antes da inserção para evitar duplicações de cotações, garantindo consistência.
+// Exemplo conceitual de consumo e salvamento no Worker Service
+public class QuotesConsumerService : BackgroundService
+{
+    private readonly IConsumer<Null, string> _consumer;
+    private readonly IServiceScopeFactory _scopeFactory;
+
+    public QuotesConsumerService(IConfiguration config, IServiceScopeFactory scopeFactory)
+    {
+        var consumerConfig = new ConsumerConfig { /* ... Kafka config ... */ };
+        _consumer = new ConsumerBuilder<Null, string>(consumerConfig).Build();
+        _scopeFactory = scopeFactory;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _consumer.Subscribe("cotacoes-topic");
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            var consumeResult = _consumer.Consume(stoppingToken);
+            var quoteMessage = consumeResult.Message.Value;
+
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ItauInvestimentosDbContext>();
+                var cotacao = JsonConvert.DeserializeObject<Cotacao>(quoteMessage);
+
+                // Implementação de Idempotência:
+                // Verificar se a cotação já existe pela chave de idempotência (ex: AtivoId + DataHora)
+                var existingQuote = await dbContext.Cotacoes
+                    .FirstOrDefaultAsync(c => c.AtivoId == cotacao.AtivoId && c.DataHora == cotacao.DataHora);
+
+                if (existingQuote == null)
+                {
+                    // Implementação de Retry com Polly:
+                    var retryPolicy = Policy
+                        .Handle<DbUpdateException>() // Ou outras exceções de rede/DB
+                        .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+
+                    await retryPolicy.ExecuteAsync(async () =>
+                    {
+                        dbContext.Cotacoes.Add(cotacao);
+                        await dbContext.SaveChangesAsync();
+                    });
+                }
+                // Se já existir, a mensagem é idempotente e ignorada ou atualizada de forma segura.
+            }
+        }
+    }
+} 
