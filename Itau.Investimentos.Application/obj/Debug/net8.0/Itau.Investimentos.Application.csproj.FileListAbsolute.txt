@@ -1,0 +1,17 @@
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\bin\Debug\net8.0\Itau.Investimentos.Application.deps.json
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\bin\Debug\net8.0\Itau.Investimentos.Application.dll
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\bin\Debug\net8.0\Itau.Investimentos.Application.pdb
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\bin\Debug\net8.0\Itau.Investimentos.Core.dll
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\bin\Debug\net8.0\Itau.Investimentos.Infrastructure.dll
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\bin\Debug\net8.0\Itau.Investimentos.Core.pdb
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\bin\Debug\net8.0\Itau.Investimentos.Infrastructure.pdb
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\obj\Debug\net8.0\Itau.Investimentos.Application.csproj.AssemblyReference.cache
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\obj\Debug\net8.0\Itau.Investimentos.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\obj\Debug\net8.0\Itau.Investimentos.Application.AssemblyInfoInputs.cache
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\obj\Debug\net8.0\Itau.Investimentos.Application.AssemblyInfo.cs
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\obj\Debug\net8.0\Itau.Investimentos.Application.csproj.CoreCompileInputs.cache
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\obj\Debug\net8.0\Itau.Inv.B3FD550A.Up2Date
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\obj\Debug\net8.0\Itau.Investimentos.Application.dll
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\obj\Debug\net8.0\refint\Itau.Investimentos.Application.dll
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\obj\Debug\net8.0\Itau.Investimentos.Application.pdb
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Application\obj\Debug\net8.0\ref\Itau.Investimentos.Application.dll

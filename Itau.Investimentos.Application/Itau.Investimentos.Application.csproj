@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Itau.Investimentos.Core\Itau.Investimentos.Core.csproj" />
+    <ProjectReference Include="..\Itau.Investimentos.Infrastructure\Itau.Investimentos.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,11 @@
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Core\bin\Debug\net8.0\Itau.Investimentos.Core.deps.json
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Core\bin\Debug\net8.0\Itau.Investimentos.Core.dll
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Core\bin\Debug\net8.0\Itau.Investimentos.Core.pdb
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Core\obj\Debug\net8.0\Itau.Investimentos.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Core\obj\Debug\net8.0\Itau.Investimentos.Core.AssemblyInfoInputs.cache
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Core\obj\Debug\net8.0\Itau.Investimentos.Core.AssemblyInfo.cs
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Core\obj\Debug\net8.0\Itau.Investimentos.Core.csproj.CoreCompileInputs.cache
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Core\obj\Debug\net8.0\Itau.Investimentos.Core.dll
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Core\obj\Debug\net8.0\refint\Itau.Investimentos.Core.dll
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Core\obj\Debug\net8.0\Itau.Investimentos.Core.pdb
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Core\obj\Debug\net8.0\ref\Itau.Investimentos.Core.dll

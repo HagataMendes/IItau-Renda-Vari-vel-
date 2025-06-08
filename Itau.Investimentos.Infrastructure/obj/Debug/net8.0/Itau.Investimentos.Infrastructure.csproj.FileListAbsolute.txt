@@ -1,0 +1,17 @@
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\bin\Debug\net8.0\Itau.Investimentos.Infrastructure.deps.json
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\bin\Debug\net8.0\Itau.Investimentos.Infrastructure.runtimeconfig.json
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\bin\Debug\net8.0\Itau.Investimentos.Infrastructure.dll
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\bin\Debug\net8.0\Itau.Investimentos.Infrastructure.pdb
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\bin\Debug\net8.0\Itau.Investimentos.Core.dll
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\bin\Debug\net8.0\Itau.Investimentos.Core.pdb
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\obj\Debug\net8.0\Itau.Investimentos.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\obj\Debug\net8.0\Itau.Investimentos.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\obj\Debug\net8.0\Itau.Investimentos.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\obj\Debug\net8.0\Itau.Investimentos.Infrastructure.AssemblyInfo.cs
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\obj\Debug\net8.0\Itau.Investimentos.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\obj\Debug\net8.0\Itau.Inv.72AEC75A.Up2Date
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\obj\Debug\net8.0\Itau.Investimentos.Infrastructure.dll
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\obj\Debug\net8.0\refint\Itau.Investimentos.Infrastructure.dll
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\obj\Debug\net8.0\Itau.Investimentos.Infrastructure.pdb
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\obj\Debug\net8.0\Itau.Investimentos.Infrastructure.genruntimeconfig.cache
+C:\Users\Admin\source\repos\Itau.Investimentos\Itau.Investimentos.Infrastructure\obj\Debug\net8.0\ref\Itau.Investimentos.Infrastructure.dll
