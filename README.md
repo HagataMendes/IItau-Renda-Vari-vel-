@@ -2,7 +2,6 @@
 Este projeto detalha a concepção e as soluções técnicas para um Sistema de Controle de Investimentos, com foco especial em Renda Variável. Desenvolvido para demonstrar conhecimento em modelagem de dados, otimização de performance, desenvolvimento .NET C# e integração de sistemas, ele aborda os desafios e as necessidades de um ambiente dinâmico
 
 ## O que é esperado no teste: 
-
 - Esse teste visa conhecer o potencial de cada um dos concorrentes, encontrar pistas, prestar atenção, prestar atenção nas histórias de negócios e técnicas, em qualidade, logica, estudos extras (negócio), programação bem-feita, porém no nível de “dificuldade/performance” correto (não usar um canhão para matar uma formiga, nem um estilingue para enfrentar um leão), com bons testes e boa documentação, não restrinja a criatividade somente ao enredo, queremos ver a criatividade de cada um, é permitido o uso de IAs, para acelerar o desenvolvimento, no Itaú fazemos uso correto delas, todos os dias.
 
 # No Itau temos como plataforma de Investimentos a Íon
@@ -11,8 +10,9 @@ Aqui você encontra tudo o que precisa pra investir com tecnologia, inovação, 
 
 ## Desafio Proposto :pushpin:
 - Nesse projeto, busquei conectar uma API ao Banco de Dados MYSQL
+- Em Escalabidade e Perfomance sugeri implemntar com instâncias AWS
   
-- Modelagem de Banco Relacional (Recomendado MySQL) 
+
 ![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/1%20-%20Modelagem%20de%20Banco%20Relacional%20My%20sql.png)
 
 ## 1. Modelagem de Banco Relacional (MySQL)
@@ -101,14 +101,11 @@ A escolha dos tipos de dados para cada coluna foi realizada para garantir a inte
 - Requisito: Otimizar consultas (operações de usuário por ativo nos últimos 30 dias) e planejar a atualização da Posição baseada em cotações.
 ![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/2%20-%20Tarefa%202%20Justificar%20indice%20e%20pesquisa%2030%20dias.png)
 
-## 2. Índices e Performance
-
 O sistema foi desenhado para permitir a consulta rápida de todas as operações de um usuário em determinado ativo nos últimos 30 dias. Além disso, foi considerada a necessidade de que as cotações, que podem mudar em milésimos de segundos, afetem em tempo real a Posição dos clientes (P&L e Preço Médio). Para atender a esses requisitos de performance, as seguintes estratégias foram implementadas e justificadas:
 
 ### 2.1 Proposta e Justificativa de Índices
 
 Para otimizar as consultas e atualizações de dados, os seguintes índices foram propostos e, em parte, implementados:
-
 * **Para a tabela `opr_operacoes` (Operações):**
     * **Índice Proposto:** `CREATE INDEX idx_operacoes_usuario_ativo_datahora ON operacoes (usuario_id, ativo_id, data_hora DESC);`
     * **Justificativa:** Este índice composto é crucial para a consulta de operações de um usuário em um ativo específico em um período de tempo. A ordem das colunas (`usuario_id`, `ativo_id`, `data_hora`) permite que o banco de dados utilize o índice de forma eficiente: primeiro, filtra os dados pelo usuário e ativo, e depois, a ordenação decrescente de `data_hora` acelera a recuperação dos registros mais recentes (por exemplo, os últimos 30 dias), evitando a necessidade de varrer toda a tabela.
@@ -157,13 +154,12 @@ Para garantir que a Posição dos clientes (P&L e Preço Médio) seja afetada em
 * **Atualização da Posição no Banco de Dados:** A tabela `pos_posicoes` seria então atualizada com os novos valores calculados (especialmente `pos_pl`). A coluna `pos_data_ultima_atualizacao` será automaticamente atualizada para o momento da modificação do registro devido à sua configuração `ON UPDATE CURRENT_TIMESTAMP`, garantindo o registro do timestamp da última atualização. Todo o processo de atualização deve ser encapsulado em uma transação de banco de dados para manter a consistência dos dados.
 * **Componentes Envolvidos:** Esta estrutura requer a colaboração entre as camadas da aplicação: a camada `Itau.Investimentos.Application` orquestraria a lógica de negócio (como o recálculo), enquanto a camada `Itau.Investimentos.Infrastructure` forneceria a implementação dos repositórios para interagir com o banco de dados de forma eficiente e assíncrona, utilizando Entity Framework Core.
 
-  ## 3. Aplicação .NET Core em C#
+  ## Tarefa 3. Aplicação .NET Core em C#
 
 Esta etapa focou na criação da estrutura da aplicação em .NET Core, utilizando C#, com ênfase em boas práticas de separação de responsabilidades e a utilização de Entity Framework Core para acesso a dados.
 ![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/3%20-%20Erro%20na%20API%20.png)
 
 ### 3.1 Estrutura de Camadas (Solução)
-
 O projeto foi organizado em uma solução de múltiplos projetos no Visual Studio, seguindo o padrão de **Arquitetura em Camadas** para promover separação de responsabilidades, manutenibilidade e escalabilidade. Essa estrutura é composta por:
 
 * **`Itau.Investimentos.sln` (Solução Principal):** O contêiner de alto nível que agrupa todos os projetos relacionados ao sistema.
@@ -285,7 +281,7 @@ public static class CalculadoraPrecoMedio
 ```
 ---
 
-## 5. Testes Unitários
+## Tarefa 5. Testes Unitários
 
 Bateria de testes unitários para a lógica de negócio, usando xUnit.
 
@@ -365,18 +361,17 @@ public class CalculadoraPrecoMedioTests
     // Mais testes para outros cenários de erro e casos de borda...
 }
 ```
-## 6. Testes Mutantes
+---
+## Tarefa 6. Testes Mutantes
 
 ### 6.1 Conceito e Importância
 
 Técnica para avaliar a qualidade dos testes unitários, introduzindo pequenas falhas (mutações) no código para verificar se os testes as detectam ("matam" os mutantes). Essencial para encontrar lacunas em testes e aumentar a confiança no código.
 
-### 6.2 Exemplo de Mutação no Preço Médio
-
 * **Mutação:** No método `CalcularPrecoMedioPonderado`, alterar `*` para `+` na linha de cálculo `totalInvestido += compra.PrecoUnitario * compra.Quantidade;`.
 * **Teste Afetado:** Um teste que espera `10.66` passaria a receber `1.14` (Ex: `(10+100) + (12+50) = 172; 172/150 = 1.14`), falhando e confirmando a eficácia do teste.
-
-### 7. Integração entre Sistemas
+---
+### Tarefa 7. Integração entre Sistemas
 Integração resiliente com microserviços externos (ex: Kafka para cotações).
 
 *7.1 Worker Service .NET e Estratégias de Resiliência
@@ -429,6 +424,144 @@ public class QuotesConsumerService : BackgroundService
                 }
                 // Se já existir, a mensagem é idempotente e ignorada ou atualizada de forma segura.
             }
-        }
+        } 
+---
+## Tarefa 8. Engenharia do Caos
+
+Garantir a resiliência do serviço de operações contra falhas de dependências (ex: cotações).
+
+### 8.1 Circuit Breaker, Fallback e Observabilidade
+
+* **Circuit Breaker (Polly):** Protege o serviço de operações contra falhas em cascata de serviços dependentes. Se o serviço de cotações falhar, o circuit breaker "abre", evitando chamadas desnecessárias e permitindo recuperação.
+* **Fallback:** Em caso de falha do serviço de cotações, o serviço de operações pode retornar a última cotação conhecida (cache) ou um valor padrão, mantendo a funcionalidade degradada.
+* **Observabilidade:** Monitoramento contínuo via:
+    * **Logging Estruturado:** Serilog/NLog.
+    * **Métricas:** Prometheus/Grafana (latência, erros, status do circuit breaker).
+    * **Distributed Tracing:** OpenTelemetry/Jaeger (rastreamento de requisições por múltiplos serviços). 
+```  
+      // Exemplo conceitual de Circuit Breaker e Fallback com Polly
+public class CotacaoService
+{
+    private readonly HttpClient _httpClient;
+    private readonly AsyncCircuitBreakerPolicy _circuitBreaker;
+    private Cotacao _lastKnownQuote; // Cache simples
+
+    public CotacaoService(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+        _circuitBreaker = Policy
+            .Handle<HttpRequestException>()
+            .CircuitBreakerAsync(
+                exceptionsAllowedBeforeBreaking: 3,
+                durationOfBreak: TimeSpan.FromSeconds(30));
     }
-} 
+
+    public async Task<Cotacao> GetLatestQuoteAsync(string codigoAtivo)
+    {
+        return await _circuitBreaker.ExecuteAndCaptureAsync(async () =>
+        {
+            // Chamada à API externa de cotações (ex: [https://b3api.vercel.app/](https://b3api.vercel.app/))
+            var response = await _httpClient.GetAsync(<span class="math-inline">"\[https\://b3api\.vercel\.app/api/\]\(https\://b3api\.vercel\.app/api/\)\{codigoAtivo\}"\);
+response\.EnsureSuccessStatusCode\(\);
+var quote \= await response\.Content\.ReadFromJsonAsync<Cotacao\>\(\);
+\_lastKnownQuote \= quote; // Atualiza o cache
+return quote;
+\}\)\.FallbackAsync\(
+fallbackAction\: \(\) \=\> Task\.FromResult\(\_lastKnownQuote ?? new Cotacao \{ CodigoAtivo \= codigoAtivo, PrecoUnitario \= 0, DataHora \= DateTime\.UtcNow \}\),
+onFallbackAsync\: \(exception\) \=\>
+\{
+// Log de fallback para observabilidade
+Console\.WriteLine\(</span>"Fallback acionado para {codigoAtivo}: {exception.Exception.Message}");
+                return Task.CompletedTask;
+            }
+        ).ExecuteAsync();
+    }
+}
+```
+---
+## Tarefa 9. Escalabilidade e Performance
+
+Estratégias para lidar com 1 milhão de operações/dia e o crescimento do sistema, aplicando conceitos da AWS.
+
+### 9.1 Auto-Scaling Horizontal (AWS EC2 Auto Scaling)
+
+* **Conceito:** Aumentar/diminuir automaticamente o número de instâncias do serviço de operações na AWS.
+* **Aplicação AWS:** Utilização do **Amazon EC2 Auto Scaling**.
+    * Define-se um **Grupo de Auto Scaling** e **Políticas de Escalamento** baseadas em métricas do Amazon CloudWatch (e.g., % de utilização da CPU, requisições por instância).
+* **Impacto:** Permite que o sistema se adapte dinamicamente à demanda, mantendo performance e disponibilidade. Essencial que o serviço seja *stateless*.
+
+### 9.2 Balanceamento de Carga (AWS Elastic Load Balancer - ELB)
+
+* **Conceito:** Distribuir requisições de entrada de forma eficiente entre as instâncias do serviço.
+* **Aplicação AWS:** Uso do **Elastic Load Balancer (ELB)**, preferencialmente um **Application Load Balancer (ALB)** para serviços HTTP/HTTPS.
+* **Estratégias de Balanceamento:**
+    * **Round-Robin:** Distribuição sequencial. Simples, mas menos eficiente para cargas desiguais.
+    * **Menor Latência (Least Outstanding Requests/Connections):** O ALB e NLB otimizam o roteamento para as instâncias mais disponíveis/com menos conexões, visando a menor latência.
+* **Escolha para o Cenário:** Para 1 milhão de operações/dia, o **ALB com algoritmos que consideram menor latência/requisições pendentes** é o mais adequado, garantindo o melhor tempo de resposta e eficiência.
+---
+## Tarefa 10. Documentação e APIs
+
+Exposição de APIs RESTful via `Itau.Investimentos.Api` e documentação com OpenAPI 3.0.
+
+### 10.1 Endpoints RESTful Propostos
+
+Exemplos de endpoints:
+
+* **Última Cotação por Ativo:**
+    * `GET /api/v1/cotacoes/{codigoAtivo}/ultima`
+    * Ex: `GET /api/v1/cotacoes/PETR4/ultima`
+    * *Usa API externa para cotações (`https://b3api.vercel.app/`)*
+
+* **Preço Médio por Ativo para Usuário:**
+    * `GET /api/v1/usuarios/{usuarioId}/posicoes/{codigoAtivo}/preco-medio`
+    * Ex: `GET /api/v1/usuarios/1/posicoes/ITUB4/preco-medio`
+
+* **Posição de Cliente (todos ativos):**
+    * `GET /api/v1/usuarios/{usuarioId}/posicoes`
+    * Ex: `GET /api/v1/usuarios/1/posicoes`
+
+* **Total de Corretagem da Corretora:**
+    * `GET /api/v1/corretagem/total`
+    * Ex: `GET /api/v1/corretagem/total`
+
+* **Ranking de Clientes (Maiores Posições / Corretagem):**
+    * `GET /api/v1/ranking/clientes`
+    * Ex: `GET /api/v1/ranking/clientes?tipo=posicao&top=10`
+10.2 Esboço da Documentação OpenAPI 3.0 (YAML)
+Documentação gerada via Swagger (/swagger). Exemplo para "Última Cotação por Ativo":
+```
+openapi: 3.0.0
+info:
+  title: API de Investimentos Itaú
+  version: 1.0.0
+  description: API para gerenciar operações de investimentos, cotações e posições.
+servers:
+  - url: http://localhost:5000/api/v1
+paths:
+  /cotacoes/{codigoAtivo}/ultima:
+    get:
+      summary: Retorna a última cotação de um ativo específico.
+      tags: [Cotações]
+      parameters:
+        - in: path
+          name: codigoAtivo
+          schema: {type: string, example: PETR4}
+          required: true
+          description: O código do ativo (ex: PETR4, ITUB4).
+      responses:
+        '200':
+          description: Última cotação do ativo.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ativoId: {type: integer, format: int32}
+                  codigoAtivo: {type: string}
+                  precoUnitario: {type: number, format: float}
+                  dataHora: {type: string, format: date-time}
+              examples:
+                sucesso:
+                  value: {ativoId: 1, codigoAtivo: "PETR4", precoUnitario: 35.50, dataHora: "2025-06-07T10:30:00Z"}
+        '404': {description: Ativo não encontrado ou sem cotações.}
+        '500': {description: Erro interno do servidor.}
