@@ -1,18 +1,82 @@
 ## 💻 Sobre o projeto
-Este projeto detalha a concepção e as soluções técnicas para um Sistema de Controle de Investimentos, com foco especial em Renda Variável. Desenvolvido para demonstrar conhecimento em modelagem de dados, otimização de performance, desenvolvimento .NET C# e integração de sistemas, ele aborda os desafios e as necessidades de um ambiente dinâmico
+# Projeto de Plataforma de Investimentos Itaú Engenheiro(a) TI Jr 
 
-## O que é esperado no teste: 
-- Esse teste visa conhecer o potencial de cada um dos concorrentes, encontrar pistas, prestar atenção, prestar atenção nas histórias de negócios e técnicas, em qualidade, logica, estudos extras (negócio), programação bem-feita, porém no nível de “dificuldade/performance” correto (não usar um canhão para matar uma formiga, nem um estilingue para enfrentar um leão), com bons testes e boa documentação, não restrinja a criatividade somente ao enredo, queremos ver a criatividade de cada um, é permitido o uso de IAs, para acelerar o desenvolvimento, no Itaú fazemos uso correto delas, todos os dias.
+## 🌟 Meu Objetivo e Diferenciais
 
-# No Itau temos como plataforma de Investimentos a Íon
+Meu objetivo foi construir um sistema que não apenas atenda às necessidades transacionais, mas que se destaque pela **resiliência, escalabilidade e alta confiabilidade**, elementos cruciais para um ambiente financeiro de alta demanda. A arquitetura foi concebida por mim para suportar um **volume elevado de operações (1 milhão/dia)** e garantir a continuidade do serviço, mesmo diante de falhas. Um dos meus primeiros desafios e diferenciais foi a **tentativa e implementação bem-sucedida da conexão do banco de dados MySQL com a API, estabelecendo uma base sólida para a persistência dos dados.**
+
+### 🛡️ Minha Arquitetura Robusta e Resiliente
+
+Adotei princípios de engenharia de software de ponta para garantir a robustez e a tolerância a falhas:
+
+* **Tolerância a Falhas com Polly (Circuit Breaker & Fallback):** Eu implementei disjuntores de circuito para proteger o sistema contra falhas em cascata de serviços dependentes (como APIs de cotação externas). Em caso de indisponibilidade, o sistema adota comportamentos de *fallback* (e.g., uso de cache), assegurando a continuidade do serviço, mesmo que degradada.
+* **Integração Assíncrona com Apache Kafka:** Eu consumo dados críticos, como cotações, de forma assíncrona via filas Kafka, garantindo alta vazão e desacoplamento entre os serviços. A idempotência no processamento de mensagens previne inconsistências de dados.
+* **Observabilidade Completa (Serilog, OpenTelemetry):** Eu monitorei proativamente a saúde e o desempenho do sistema com logging estruturado, métricas detalhadas e distributed tracing, permitindo a rápida identificação e resolução de gargalos e falhas.
+
+### 🚀 Escalabilidade e Alta Performance na Nuvem (Foco Total na AWS) Faz um grande diferencial no projeto e para o banco.
+
+Projetado por mim para crescer com a demanda, o sistema explora ao máximo os recursos da nuvem, com um **foco estratégico e profundo nos serviços da Amazon Web Services (AWS)** para garantir escalabilidade, resiliência e performance:
+
+* **Auto-Scaling Horizontal (Amazon EC2 Auto Scaling):** Eu ajustei a capacidade computacional da API dinamicamente, adicionando ou removendo instâncias automaticamente com base em métricas de uso, garantindo performance consistente em picos de tráfego.
+* **Balanceamento de Carga Inteligente (AWS Application Load Balancer - ALB):** Eu distribuí requisições de forma otimizada entre as instâncias disponíveis, utilizando algoritmos que priorizam a menor latência, assegurando tempos de resposta rápidos e eficiente uso dos recursos.
+* **Serviços Gerenciados AWS:** Eu utilizei serviços como **Amazon RDS for MySQL** para banco de dados gerenciado e **Amazon MSK** para Kafka, reduzindo a sobrecarga operacional e aumentando a confiabilidade.
+
+### ✅ Minha Qualidade e Confiabilidade do Código
+
+A qualidade do código é fundamental para a confiança nos resultados:
+
+* **Testes Unitários Abrangentes (xUnit, FluentAssertions):** A lógica de negócio, incluindo o cálculo de preço médio ponderado, foi validada por mim por uma bateria de testes, cobrindo cenários positivos e de erro, garantindo a exatidão das operações.
+* **Testes Mutantes (Stryker.NET):** Eu apliquei técnicas de teste mutante para avaliar a eficácia dos meus testes unitários, identificando lacunas e elevando a confiança na cobertura e na capacidade de detecção de *bugs*.
+
+## 📈 Minhas Funcionalidades Chave da API
+
+A API RESTful (`Itau.Investimentos.Api`) que eu desenvolvi oferece as seguintes funcionalidades principais:
+
+* **Consulta de Cotação de Ativos:** Obtenção da última cotação de um ativo específico.
+    * `GET /api/v1/cotacoes/{codigoAtivo}/ultima`
+* **Cálculo de Preço Médio Ponderado por Ativo e Usuário:**
+    * `GET /api/v1/usuarios/{usuarioId}/posicoes/{codigoAtivo}/preco-medio`
+* **Consulta da Posição Consolidada de Cliente:** Visão de todos os ativos de um cliente.
+    * `GET /api/v1/usuarios/{usuarioId}/posicoes`
+* **Total de Corretagem da Corretora:**
+    * `GET /api/v1/corretagem/total`
+* **Ranking de Clientes:** Maiores posições ou maiores valores de corretagem.
+    * `GET /api/v1/ranking/clientes?tipo={posicao|corretagem}&top={N}`
+
+## 🛠 Tecnologias e Ferramentas Utilizadas
+
+As principais tecnologias, ferramentas e serviços que compõem este projeto são:
+
+* **Backend:** .NET 8 (ASP.NET Core), Entity Framework Core.
+* **Banco de Dados:** MySQL.
+* **Testes:** xUnit, FluentAssertions, Stryker.NET (sugerido).
+* **Integração:** Apache Kafka (com Confluent.Kafka).
+* **Resiliência:** Polly (Retry, Circuit Breaker, Fallback).
+* **Observabilidade:** Serilog, OpenTelemetry (com ferramentas como Jaeger, Prometheus, Grafana).
+* **Containerização:** Docker.
+* **Infraestrutura Cloud (Foco AWS):** Amazon Web Services (AWS):
+    * Amazon EC2 Auto Scaling
+    * Elastic Load Balancer (ALB)
+    * Amazon RDS for MySQL
+    * Amazon MSK (Managed Streaming for Kafka)
+    * Amazon CloudWatch
+* **Documentação:** Swagger/OpenAPI.
+
+## 📊 Meus Insights de Modelagem de Dados
+
+O design do banco de dados foi otimizado por mim para performance e integridade:
+
+* **Indices Estratégicos:** Eu criei índices em colunas frequentemente usadas em cláusulas `WHERE` e `JOIN` (e.g., `usuario_id`, `ativo_id`, `data_operacao`) para acelerar as consultas, especialmente aquelas que buscam dados por período (ex: últimos 30 dias).
+* **Consulta Otimizada por Período:** A pesquisa por operações nos últimos 30 dias é eficiente devido ao índice na coluna de data, permitindo buscas rápidas em grandes volumes de dados.
+
+# No Itaú temos como plataforma de Investimentos a Íon :pushpin:
 Aqui você encontra tudo o que precisa pra investir com tecnologia, inovação, segurança e uma assessoria de primeira.
 ![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/5-%20Itau%20Ion.png)
 
-## Desafio Proposto :pushpin:
+## Projeto :pushpin:
 - Nesse projeto, busquei conectar uma API ao Banco de Dados MYSQL
-- Em Escalabidade e Perfomance sugeri implemntar com instâncias AWS
+- Em Escalabidade e Perfomance sugeri implementar com instâncias AWS
   
-
 ![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/1%20-%20Modelagem%20de%20Banco%20Relacional%20My%20sql.png)
 
 ## 1. Modelagem de Banco Relacional (MySQL)
@@ -374,11 +438,12 @@ Técnica para avaliar a qualidade dos testes unitários, introduzindo pequenas f
 ### Tarefa 7. Integração entre Sistemas
 Integração resiliente com microserviços externos (ex: Kafka para cotações).
 
-*7.1 Worker Service .NET e Estratégias de Resiliência
-Worker Service: Itau.Investimentos.QuotesConsumer consumirá mensagens Kafka (Confluent.Kafka) e salvará cotações.
-Retry (Polly): Políticas de retentativa com exponential backoff para operações de escrita no banco de dados, via Entity Framework Core.
+Worker Service .NET e Estratégias de Resiliência
+
+Worker Service: `Itau.Investimentos.QuotesConsumer` consumirá mensagens Kafka (Confluent.Kafka) e salvará cotações.
+Retry (Polly): Políticas de retentativa com exponential backoff para operações de escrita no banco de dados, via `Entity Framework Core.`
 Idempotência: Chave de idempotência em mensagens Kafka. Verificação antes da inserção para evitar duplicações de cotações, garantindo consistência.
-// Exemplo conceitual de consumo e salvamento no Worker Service
+
 public class QuotesConsumerService : BackgroundService
 {
     private readonly IConsumer<Null, string> _consumer;
@@ -479,7 +544,7 @@ Console\.WriteLine\(</span>"Fallback acionado para {codigoAtivo}: {exception.Exc
 }
 ```
 ---
-## Tarefa 9. Escalabilidade e Performance
+## Tarefa 9. Escalabilidade e Performance AWS
 
 Estratégias para lidar com 1 milhão de operações/dia e o crescimento do sistema, aplicando conceitos da AWS.
 
