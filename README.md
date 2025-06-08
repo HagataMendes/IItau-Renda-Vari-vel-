@@ -3,7 +3,7 @@
 
 ## 🌟 Meu Objetivo e Diferenciais
 
-Meu objetivo foi construir um sistema que não apenas atenda às necessidades transacionais, mas que se destaque pela **resiliência, escalabilidade e alta confiabilidade**, elementos cruciais para um ambiente financeiro de alta demanda. A arquitetura foi concebida por mim para suportar um **volume elevado de operações (1 milhão/dia)** e garantir a continuidade do serviço, mesmo diante de falhas. Um dos meus primeiros desafios e diferenciais foi a **tentativa e implementação bem-sucedida da conexão do banco de dados MySQL com a API, estabelecendo uma base sólida para a persistência dos dados.**
+Meu objetivo foi construir um sistema que não apenas atenda às necessidades transacionais, mas que se destaque pela **resiliência, escalabilidade e alta confiabilidade**, elementos cruciais para um ambiente financeiro de alta demanda. A arquitetura foi concebida por mim para suportar um **volume elevado de operações (1 milhão/dia)** e garantir a continuidade do serviço, mesmo diante de falhas. Um dos meus primeiros desafios e diferenciais foi a **tentativa de implementação bconexão do banco de dados MySQL com a API, estabelecendo uma base sólida para a persistência dos dados.**
 
 ### 🛡️ Minha Arquitetura Robusta e Resiliente
 
@@ -74,9 +74,7 @@ Aqui você encontra tudo o que precisa pra investir com tecnologia, inovação, 
 ![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/5-%20Itau%20Ion.png)
 
 ## Projeto :pushpin:
-- Nesse projeto, busquei conectar uma API ao Banco de Dados MYSQL
-- Em Escalabidade e Perfomance sugeri implementar com instâncias AWS
-  
+
 ![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/1%20-%20Modelagem%20de%20Banco%20Relacional%20My%20sql.png)
 
 ## 1. Modelagem de Banco Relacional (MySQL)
@@ -266,7 +264,7 @@ Durante o desenvolvimento e integração da camada de Aplicação e Infraestrutu
 
 * **Conclusão Atual (Problema de Ambiente Persistente):** Apesar de todas as validações e correções de código e configuração do projeto terem sido realizadas, o erro `CS5001` (e a intermitência de outros erros de namespace) persistiu. Isso sugere que o problema reside em um nível mais profundo, provavelmente relacionado a uma inconsistência ou corrupção na instalação do Visual Studio ou do ambiente de compilação do .NET Core na máquina de desenvolvimento. Devido aos prazos, a depuração e resolução direta deste problema de ambiente foram temporariamente pausadas para permitir o avanço em outras tarefas de implementação de lógica de negócio.
 
-* **Impacto:** Atualmente, não é possível executar a API para testar a conexão com o banco de dados ou os endpoints implementados. No entanto, a estrutura do código-fonte para a integração com o banco de dados e as camadas da aplicação estão presentes e configuradas conforme as boas práticas.
+* **Impacto:** Atualmente, não é possível executar a API para testar a conexão com o banco de dados ou os endpoints implementados. No entanto, a estrutura do código-fonte para a integração com o banco de dados e as camadas da aplicação estão presentes e configuradas conforme as boas práticas. ( Infelizmente)
 
 ## Arquitetura foi desenhada para utilizar async/await com Entity Framework Core.
 ![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/3%20-%20%20utilizando%20os%20recursos%20do%20Entity%20Framework%20Core%20e%20garantindo%20o%20uso%20de%20async%20await.png)
