@@ -156,3 +156,66 @@ Para garantir que a Posição dos clientes (P&L e Preço Médio) seja afetada em
 * **Recálculo de P&L e Outros Indicadores:** Para cada posição afetada, o `pos_pl` (Lucro/Prejuízo) e potencialmente outros indicadores (se necessário) seriam recalculados utilizando a nova cotação. A fórmula básica para P&L é: `P&L = (Cotação Atual do Ativo - Preço Médio Ponderado da Posição) * Quantidade da Posição`.
 * **Atualização da Posição no Banco de Dados:** A tabela `pos_posicoes` seria então atualizada com os novos valores calculados (especialmente `pos_pl`). A coluna `pos_data_ultima_atualizacao` será automaticamente atualizada para o momento da modificação do registro devido à sua configuração `ON UPDATE CURRENT_TIMESTAMP`, garantindo o registro do timestamp da última atualização. Todo o processo de atualização deve ser encapsulado em uma transação de banco de dados para manter a consistência dos dados.
 * **Componentes Envolvidos:** Esta estrutura requer a colaboração entre as camadas da aplicação: a camada `Itau.Investimentos.Application` orquestraria a lógica de negócio (como o recálculo), enquanto a camada `Itau.Investimentos.Infrastructure` forneceria a implementação dos repositórios para interagir com o banco de dados de forma eficiente e assíncrona, utilizando Entity Framework Core.
+
+  ## 3. Aplicação .NET Core em C#
+
+Esta etapa focou na criação da estrutura da aplicação em .NET Core, utilizando C#, com ênfase em boas práticas de separação de responsabilidades e a utilização de Entity Framework Core para acesso a dados.
+![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/3%20-%20Erro%20na%20API%20.png)
+
+### 3.1 Estrutura de Camadas (Solução)
+
+O projeto foi organizado em uma solução de múltiplos projetos no Visual Studio, seguindo o padrão de **Arquitetura em Camadas** para promover separação de responsabilidades, manutenibilidade e escalabilidade. Essa estrutura é composta por:
+
+* **`Itau.Investimentos.sln` (Solução Principal):** O contêiner de alto nível que agrupa todos os projetos relacionados ao sistema.
+* **`Itau.Investimentos.Api` (Projeto ASP.NET Core Web API):**
+    * **Responsabilidade:** Atua como a camada de apresentação da aplicação. Expõe endpoints RESTful que recebem requisições HTTP e retornam respostas. É o ponto de entrada da aplicação.
+    * **Tecnologias:** ASP.NET Core Web API, configuração de middlewares, Injeção de Dependência.
+* **`Itau.Investimentos.Application` (Projeto Biblioteca de Classes):**
+    * **Responsabilidade:** Camada de aplicação ou de serviços. Contém a lógica de negócio que orquestra as operações, coordena fluxos de trabalho e utiliza os serviços e repositórios das camadas inferiores para atender às requisições da API. É aqui que os casos de uso são definidos.
+* **`Itau.Investimentos.Core` (Projeto Biblioteca de Classes):**
+    * **Responsabilidade:** Camada de domínio ou de negócio puro. Contém as entidades de domínio (modelos de dados como `Usuario`, `Ativo`, `Operacao`, etc.) e as regras de negócio mais fundamentais e agnósticas a tecnologias específicas (ex: validações de entidade, algoritmos de cálculo como o preço médio). **Esta camada não deve ter dependências de infraestrutura ou de UI.**
+* **`Itau.Investimentos.Infrastructure` (Projeto Biblioteca de Classes):**
+    * **Responsabilidade:** Camada de infraestrutura. É onde a interação com recursos externos é implementada. Isso inclui a configuração e acesso ao banco de dados (via Entity Framework Core ou Dapper), implementação dos repositórios (que abstraem as operações de banco de dados), e potencialmente integração com serviços externos.
+
+### 3.2 Configuração Inicial da API (`Itau.Investimentos.Api`)
+
+O arquivo `Program.cs` no projeto `Itau.Investimentos.Api` foi configurado para inicializar a aplicação, utilizando os recursos modernos do .NET Core:
+
+* **`Top-Level Statements`**: O `Program.cs` foi estruturado para usar `top-level statements`, que permitem escrever código diretamente no arquivo sem a necessidade de uma classe `Main` explícita, simplificando o bootstrap da aplicação.
+* **Swagger/OpenAPI**: Integrado para documentação automática da API e para facilitar testes interativos dos endpoints.
+* **Configuração da Connection String**: A string de conexão para o banco de dados MySQL é lida do arquivo `appsettings.json`, permitindo fácil gerenciamento das configurações de ambiente.
+* **Registro do DbContext (Entity Framework Core)**: O `ItauInvestimentosDbContext` (o contexto do banco de dados definido na camada `Infrastructure`) foi registrado no sistema de Injeção de Dependência do .NET Core. Isso permite que qualquer serviço ou controller da API possa "pedir" uma instância do `DbContext` e interagir com o banco de dados. A configuração inclui o provedor `Pomelo.EntityFrameworkCore.MySql` e estratégias de retry para resiliência em caso de falhas temporárias de conexão.
+* **Injeção de Dependência de Repositórios e Serviços**: Os repositórios da camada `Infrastructure` (ex: `IOperacaoRepository`) e os serviços da camada `Application` (ex: `IInvestimentosService`) também foram registrados como serviços `Scoped` (uma nova instância para cada requisição HTTP). Isso garante que as dependências sejam resolvidas automaticamente pelo framework.
+* **Endpoint `WeatherForecast` (Exemplo Padrão)**: O projeto foi iniciado com um endpoint de exemplo (`/weatherforecast`) para validar a inicialização básica da API.
+
+### 3.3 Problemas de Compilação e Inicialização da API (e Tentativas de Solução)
+
+Durante o desenvolvimento e integração da camada de Aplicação e Infraestrutura, foram encontrados desafios significativos na compilação e execução do projeto principal (`Itau.Investimentos.Api`).
+
+* **Erros Principais Observados:**
+    * `CS5001: Programa não contém um método "Main" estático adequado para um ponto de entrada`: Este foi o erro mais persistente e crítico, impedindo que a aplicação fosse iniciada.
+    * `CS0104: O tipo ou nome do namespace 'Application' não existe no namespace 'Itau.Investimentos'` (e erros similares para `Infrastructure`, `Core`): Indicavam problemas de referência ou reconhecimento entre os projetos da solução.
+    * `CS0246: O tipo ou nome do namespace 'Application' não pode ser encontrado (está faltando uma diretiva using ou uma referência de assembly?)`: Complementava os erros de namespace, sugerindo falta de referências adequadas.
+
+* **Ações de Depuração e Tentativas de Solução Realizadas:**
+    * **Verificação e Ajuste de Referências de Projeto (.csproj):** Foi realizado um esforço exaustivo para garantir que o arquivo `.csproj` do `Itau.Investimentos.Api` contivesse as referências corretas aos outros projetos (`Application`, `Core`, `Infrastructure`). Isso era fundamental para que a API pudesse "enxergar" e utilizar classes e interfaces definidas nas outras camadas.
+    * **Gerenciamento de Projetos no Visual Studio:** Houve a necessidade de lidar com cenários onde projetos se encontravam "descarregados" ou não visíveis no "Gerenciador de Soluções". Isso foi abordado através do recarregamento explícito dos projetos para assegurar que todos os 4 projetos da solução estivessem ativos e sendo considerados na compilação.
+    * **Revisão e Correção do Conteúdo do `Program.cs`:** O conteúdo do `Program.cs` foi minuciosamente revisado e atualizado. Várias vezes, o código foi substituído pelo padrão completo e funcional para projetos ASP.NET Core 8.0 que utilizam "top-level statements", incluindo toda a configuração do `builder`, adição de serviços e o método `app.Run()` essencial para o ponto de entrada da aplicação.
+    * **Manipulação e Recreação do Arquivo `Program.cs`:** Devido à persistência de problemas de visibilidade ou reconhecimento do `Program.cs` pelo Visual Studio, tentamos incluí-lo manualmente através da opção "Adicionar Item Existente..." e, em alguns casos, excluí-lo fisicamente e recriá-lo via Visual Studio para garantir que estivesse corretamente referenciado no arquivo de projeto.
+    * **Verificação do SDK do .NET:** Confirmamos a presença das SDKs do .NET 8.0 na máquina, descartando a ausência do runtime como causa raiz.
+
+* **Conclusão Atual (Problema de Ambiente Persistente):** Apesar de todas as validações e correções de código e configuração do projeto terem sido realizadas, o erro `CS5001` (e a intermitência de outros erros de namespace) persistiu. Isso sugere que o problema reside em um nível mais profundo, provavelmente relacionado a uma inconsistência ou corrupção na instalação do Visual Studio ou do ambiente de compilação do .NET Core na máquina de desenvolvimento. Devido aos prazos, a depuração e resolução direta deste problema de ambiente foram temporariamente pausadas para permitir o avanço em outras tarefas de implementação de lógica de negócio.
+
+* **Impacto:** Atualmente, não é possível executar a API para testar a conexão com o banco de dados ou os endpoints implementados. No entanto, a estrutura do código-fonte para a integração com o banco de dados e as camadas da aplicação estão presentes e configuradas conforme as boas práticas.
+
+# Arquitetura foi desenhada para utilizar async/await com Entity Framework Core.
+![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/3%20-%20%20utilizando%20os%20recursos%20do%20Entity%20Framework%20Core%20e%20garantindo%20o%20uso%20de%20async%20await.png)
+### 3.2 Configuração de Acesso a Dados e Assincronicidade
+
+A aplicação foi projetada e configurada para interagir com o banco de dados MySQL utilizando Entity Framework Core, priorizando a utilização de operações assíncronas (`async/await`) para garantir a responsividade e escalabilidade.
+
+* **Entity Framework Core:** Escolhido como ORM (Object-Relational Mapper) para facilitar o mapeamento de objetos C# para o banco de dados e vice-versa.
+* **`async/await`:** A implementação de operações de banco de dados e serviços de aplicação foi concebida para ser assíncrona, utilizando o padrão `async/await`. Isso permitiria que a aplicação realizasse operações de I/O (entrada/saída), como requisições ao banco de dados, sem bloquear a thread principal, liberando-a para processar outras requisições e melhorando a responsividade e o throughput.
+* **Configuração do DbContext:** O `ItauInvestimentosDbContext` (definido na camada `Infrastructure`) foi registrado no contêiner de Injeção de Dependência do .NET Core no projeto `Itau.Investimentos.Api`, preparando a aplicação para acessar o banco de dados de forma assíncrona.
+
+**Observação:** Embora a arquitetura e as configurações para o uso de `async/await` com Entity Framework Core estejam implementadas no código-fonte, a validação em tempo de execução desta funcionalidade não foi possível devido aos persistentes erros de compilação na camada `Itau.Investimentos.Api` (conforme detalhado na seção **3.3 Problemas Atuais de Compilação e Inicialização da API**).
