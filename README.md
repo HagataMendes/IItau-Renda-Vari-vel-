@@ -69,15 +69,14 @@ O design do banco de dados foi otimizado por mim para performance e integridade:
 * **Indices Estratégicos:** Eu criei índices em colunas frequentemente usadas em cláusulas `WHERE` e `JOIN` (e.g., `usuario_id`, `ativo_id`, `data_operacao`) para acelerar as consultas, especialmente aquelas que buscam dados por período (ex: últimos 30 dias).
 * **Consulta Otimizada por Período:** A pesquisa por operações nos últimos 30 dias é eficiente devido ao índice na coluna de data, permitindo buscas rápidas em grandes volumes de dados.
 
-# No Itaú temos como plataforma de Investimentos a Íon :pushpin:
+# No Itaú temos como plataforma de Investimentos a Íon
 Aqui você encontra tudo o que precisa pra investir com tecnologia, inovação, segurança e uma assessoria de primeira.
 ![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/5-%20Itau%20Ion.png)
 
 ## Projeto :pushpin:
 
-![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/1%20-%20Modelagem%20de%20Banco%20Relacional%20My%20sql.png)
-
 ## 1. Modelagem de Banco Relacional (MySQL)
+![Projeto](https://github.com/HagataMendes/IItau-Renda-Vari-vel-/blob/main/1%20-%20Modelagem%20de%20Banco%20Relacional%20My%20sql.png)
 
 ### Script SQL de Criação das Tabelas
 
