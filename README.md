@@ -545,10 +545,10 @@ Console\.WriteLine\(</span>"Fallback acionado para {codigoAtivo}: {exception.Exc
 
 Estratégias para lidar com 1 milhão de operações/dia e o crescimento do sistema, aplicando conceitos da AWS.
 
-### 9.1 Auto-Scaling Horizontal (AWS EC2 Auto Scaling)
+### 9.1 Auto-Scaling Horizontal (AWS EC2 Auto Scaling e Docker )
 
 * **Conceito:** Aumentar/diminuir automaticamente o número de instâncias do serviço de operações na AWS.
-* **Aplicação AWS:** Utilização do **Amazon EC2 Auto Scaling**.
+* **Aplicação AWS:** Utilização do **Amazon EC2 Auto Scaling**. Docker da API é a base para o Amazon EC2 Auto Scaling.
     * Define-se um **Grupo de Auto Scaling** e **Políticas de Escalamento** baseadas em métricas do Amazon CloudWatch (e.g., % de utilização da CPU, requisições por instância).
 * **Impacto:** Permite que o sistema se adapte dinamicamente à demanda, mantendo performance e disponibilidade. Essencial que o serviço seja *stateless*.
 
